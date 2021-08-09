@@ -1,0 +1,89 @@
+﻿@model Engineers.ViewModels.EditUserViewModel
+@{
+    ViewBag.Title = "Редактирование пользователя";
+}
+<table class="table">
+    <tr>
+        <td>
+            @if (Model.Image != null)
+            {
+                <img src="~/@Model.Image" class="rounded-circle" height="40" width="40" asp-append-version="true" />
+            }
+            else
+            {
+                <img src="~/@Properties.PathToDefaultUserImage" class="rounded-circle" height="40" width="40" asp-append-version="true" />
+            }
+        </td>
+        <td><b>@Model.UserName</b></td>
+        <td><b>@Model.FullName</b></td>
+        <td><b>@Model.PhoneNumber</b></td>
+        <td>
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-sm btn-danger">
+                    Удалить
+                </button>
+            </form>
+        </td>
+    </tr>
+</table>
+<form asp-action="Edit" asp-controller="Users" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div class="form-group">
+        <label asp-for="FullName" class="control-label">ФИО пользователя</label>
+        <input type="text" asp-for="FullName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="UserName" class="control-label">Никнейм пользователя</label>
+        <input type="text" asp-for="UserName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label">Телефон</label>
+        <input type="text" asp-for="PhoneNumber" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="City" class="control-label">Город</label>
+        <input type="text" asp-for="City" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Age" class="control-label">Возраст</label>
+        <input type="text" asp-for="Age" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Education" class="control-label">Образование</label>
+        <input type="text" asp-for="Education" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Balance" class="control-label">Баланс</label>
+        <input type="text" asp-for="Balance" class="form-control" />
+    </div>
+    <div class="form-group">
+        <select class="dropdown field" asp-for="Role">
+            @foreach (var item in Roles.GetNamesForView.Keys)
+            {
+                <option value="@item">@Roles.GetNamesForView[item]</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="MinDescription" class="control-label">Краткое описание</label>
+        <input type="text" asp-for="MinDescription" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Fulldescription" class="control-label">Полное описание</label>
+    </div>
+    <div class="class_bigtext">
+        <input type="text" asp-for="Fulldescription" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Image" class="control-label">Путь к картинке</label>
+        <input type="text" asp-for="Image" class="form-control" />
+    </div>
+    <label class="control-label">Изменить картинку</label>
+    <input class="form-control top" type="file" name="file">
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-outline-secondary" />
+    </div>
+</form>

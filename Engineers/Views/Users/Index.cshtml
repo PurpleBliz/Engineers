@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Engineers.Models.User>
+@{
+    ViewBag.Title = "Список пользователей";
+}
+<a asp-action="Create">Добавить пользователя</a>
+
+<table class="table">
+    <tr><th>Картинка</th><th>ФИО</th><th>Город</th><th>Телефон</th><th>Краткое описание</th></tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>
+                @if (user.Image != null)
+                {
+                    <img src="~/@user.Image" class="rounded-circle" height="40" width="40" asp-append-version="true" />
+                }
+                else
+                {
+                    <img src="~/@Properties.PathToDefaultUserImage" class="rounded-circle" height="40" width="40" asp-append-version="true" />
+                }
+            </td>
+            <td>@user.FullName</td>
+            <td>@user.City</td>
+            <td>@user.PhoneNumber</td>
+            <td>@user.MinDescription</td>
+            <td>
+                <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">Изменить</a>
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Удалить
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

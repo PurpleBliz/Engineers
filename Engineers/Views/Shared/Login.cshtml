@@ -1,0 +1,20 @@
+﻿@using Microsoft.Extensions.Configuration;
+@model Engineers.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Вход";
+}
+<head>
+    <link rel="stylesheet" href="~/css/form.css" />
+</head>
+
+<div class="container">
+    <form class="form-signin" method="post" asp-controller="Account" asp-action="Login">
+        <h2 class="form-signin-heading">@Properties.CompanyName</h2>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <input class="form-control top" placeholder="Имя пользователя" type="text" asp-for="UserName">
+        <span asp-validation-for="UserName"></span>
+        <input class="form-control bottom " placeholder="Пароль" type="password" asp-for="Password">
+        <span asp-validation-for="Password"></span>
+        <button class="btn btn-primary btn-block" type="submit">Войти</button>
+    </form>
+</div> <!-- /container -->

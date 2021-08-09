@@ -1,0 +1,134 @@
+﻿@using Microsoft.Extensions.Configuration;
+@{
+    ViewData["Title"] = "Документация";
+}
+<h2>Заказ\Услуга</h2>
+<p>GET: /api/Order/GetAll  [ Возвращает все заказы в БД ]</p>
+<p>GET: /api/Order/GetOpen  [ Возвращает заказы со статусом 1 ]</p>
+<p>GET: /api/Order/Get  [ Возвращает заказы со статусом 1 и 2 ]</p>
+<p>GET: /api/Order/Get/{id}  [ Возвращает определенный заказ ]</p>
+<p>Responses:</p><b>
+    {
+    "Id": 0,
+    "Name": "string", - Название
+    "Description": "string", - описание
+    "Image": "string", - путь к картинке
+    "Cost": 0, - цена
+    "Address": "string", - адресс
+    "State": 0, 0-close, 1-open, 2-delete
+    "Created_at": "2021-07-28T17:00:44.907Z", - дата создания
+    "Updated_at": "2021-07-28T17:00:44.907Z" - дата обновления
+    }
+</b>
+<p></p>
+<p>POST: //api/Order/Create  [ Создает заказ ]</p>
+<p>Request body:</p><b>
+    {
+    "Name": "string", - Название
+    "Description": "string", - описание
+    "Image": "string", - путь к картинке(Недоступно)
+    "Cost": 0, - цена
+    "Address": "string", - адресс
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<p></p>
+<p>PUT: /api/Order/Update/{id}  [ обновляет заказ ]</p>
+<p>Request body:</p><b>
+    {
+    "Id": => id, возможно и без
+    "Name": "string", - Название
+    "Description": "string", - описание
+    "Image": "string", - путь к картинке(Недоступно)
+    "Cost": 0, - цена
+    "Address": "string", - адресс
+    "State": 0, 0-close, 1-open, 2-delete
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<p></p>
+<p>DELETE: /api/Order/Delete/{id}  [ удаляет ]</p>
+<p>Request body:</p><b>
+    {
+    "Id": 0
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<p></p>
+<h2>Пользователь</h2>
+<p>GET: /api/User/GetUsers  [ Возвращает всех пользователей ]</p>
+<p>GET: /api/User/GetUser/{id}  [ Возвращает одного пользователя ]</p>
+<p>Responses:</p><b>
+    {
+    "Id": "string",
+    "UserName": "string",
+    "NormalizedUserName": "string",
+    "Email": "string",
+    "NormalizedEmail": "string",
+    "EmailConfirmed": true,
+    "PasswordHash": "string",
+    "SecurityStamp": "string",
+    "ConcurrencyStamp": "string",
+    "PhoneNumber": "string",
+    "PhoneNumberConfirmed": true,
+    "TwoFactorEnabled": true,
+    "LockoutEnd": "2021-07-28T18:06:54.400Z",
+    "LockoutEnabled": true,
+    "AccessFailedCount": 0,
+    "Image": "string"
+    }
+</b>
+<p></p>
+<p>POST: /api/User/Registration  [ Регистрация пользователя ]</p>
+<p>Request body:</p><b>
+    {
+    "Id": "string",
+    "UserName": "string",
+    "Email": "string",
+    "Password": "string",
+    "Image": "string"
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<b></b>
+<p>PUT: /api/User/Update/{id}  [ Обновляет данные пользователя ]</p>
+<p>Request body:</p><b>
+    "userId": "string",
+    {
+    "Id": "string",
+    "UserName": "string",
+    "Email": "string",
+    "Password": "string",
+    "Image": "string"
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<b></b>
+<p>PUT: /api/User/UpdatePassword/{id}  [ В скором времени ]</p>
+<p>Request body:</p><b>
+    "userId": "string",
+    {
+    "Id": "string",
+    "UserName": "string",
+    "Email": "string",
+    "Password": "string",
+    "Image": "string"
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<b></b>
+<p>DELETE: /api/User/Delete/{id}  [ Удалаяет пользователя ]</p>
+<p>Request body:</p><b>
+    {
+    "Id": "string"
+    }
+</b>
+<p></p>
+<p>Responses: string</p>
+<b></b>

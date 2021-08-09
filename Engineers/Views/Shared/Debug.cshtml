@@ -1,0 +1,21 @@
+﻿@model Engineers.ViewModels.DebugViewModel
+@{
+    ViewBag.Title = "Debug model";
+}
+<table class="table">
+    <tr><th>Debug Text</th></tr>
+    @foreach (var text in Model.Body)
+    {
+<tr>
+
+    @if (text == null)
+    {
+        <td>null</td>
+    }
+    else
+    {
+        <td>@text</td>
+    }
+</tr>
+    }
+</table>
