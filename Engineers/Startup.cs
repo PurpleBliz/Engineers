@@ -26,8 +26,9 @@ namespace Engineers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddControllers();
-            services.AddMvc();
+            services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson(options =>
+options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -51,6 +52,8 @@ namespace Engineers
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UsersService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IReviewsService, ReviewsService>();
+            services.AddScoped<IRespondService, RespondService>();
 
             services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationContext>();

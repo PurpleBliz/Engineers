@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Engineers.Context; 
+using Microsoft.AspNetCore.Identity; 
 using Engineers.Models;
 using Engineers.ViewModels;
- 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Engineers.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

@@ -61,9 +61,19 @@
     </div>
     <div class="form-group">
         <select class="dropdown field" asp-for="Role">
-            @foreach (var item in Roles.GetNamesForView.Keys)
+            @if (Properties.IsDevelopment || Model.UserName == Roles.ADMIN_EN)
             {
+                @foreach (var item in Roles.GetNames.Keys)
+                {
+                    <option value="@item">@Roles.GetNames[item]</option>
+                }
+            }
+            else
+            {
+                @foreach (var item in Roles.GetNamesForView.Keys)
+                {
                 <option value="@item">@Roles.GetNamesForView[item]</option>
+                }
             }
         </select>
     </div>

@@ -1,12 +1,7 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Mvc;
 using Engineers.Models;
 using Engineers.IService;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using System;
 
 namespace Engineers.Api.Controllers
 {
@@ -23,38 +18,28 @@ namespace Engineers.Api.Controllers
             _userService = userService;
         }
 
-        // GET: api/<UserController>
         [HttpGet("GetUsers")]
-        public IEnumerable<User> GetUsers()
-        {
-            return _userService.GetUsers();
-        }
+        public Response GetUsers() => _userService.GetUsers();
 
-        // GET api/<UserController>/5
+        [HttpGet("GetOrders/{id}")]
+        public Response GetOrders(string userId) => _userService.GetOrders(userId);
+
+        [HttpGet("GetReViews/{id}")]
+        public Response GetReViews(string userId) => _userService.GetReViews(userId);
+
         [HttpGet("GetById/{id}")]
-        public Task<User> GetById(string id)
-        {
-            return _userService.GetById(id);
-        }
+        public Response GetById(string userId) => _userService.GetById(userId);
 
-        // GET api/<UserController>/5
         [HttpGet("GetByName/{userName}")]
-        public Task<User> GetByName(string userName)
-        {
-            return _userService.GetByName(userName);
-        }
+        public Response GetByName(string userName) => _userService.GetByName(userName);
 
-        // POST api/<UserController>
         [HttpPost("Registration")]
-        public Task<string> Registration([FromBody] ApiUser oApiUser, string password)
-        {
-            return _userService.Register(oApiUser, password);
-        }
+        public Response Registration([FromBody] ApiUser oApiUser, string password) => _userService.Register(oApiUser, password);
 
-        [HttpPost("UpLoadImage")]
-        public async Task<string> UpLoadImage([FromBody] string userId, IFormFile ImageFile)
+        [HttpPost("UpLoadImage/{id}")]
+        public Response UpLoadImage(string userId, IFormFile ImageFile)
         {
-            User user = await _userService.GetById(userId);
+            User user = (User)_userService.GetById(userId).Data;
 
             var path = _fileService.Upload(ImageFile);
 
@@ -62,21 +47,13 @@ namespace Engineers.Api.Controllers
 
             ApiUser apiUser = user.ConverToApiUser();
 
-            return await _userService.Update(userId, apiUser);
+            return  _userService.Update(userId, apiUser);
         }
 
-        // PUT api/<UserController>/5
         [HttpPut("Update/{id}")]
-        public Task<string> Update(string id, [FromBody] ApiUser oApiUser)
-        {
-            return _userService.Update(id, oApiUser);
-        }
+        public Response Update(string id, [FromBody] ApiUser oApiUser) => _userService.Update(id, oApiUser);
 
-        // DELETE api/<UserController>/5
         [HttpDelete("Delete/{id}")]
-        public Task<string> Delete(string id)
-        {
-            return _userService.Delete(id);
-        }
+        public Response Delete(string id) => _userService.Delete(id);
     }
 }

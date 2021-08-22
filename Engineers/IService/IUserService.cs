@@ -6,20 +6,24 @@ namespace Engineers.IService
 {
     public interface IUserService
     {
-        public Task<bool> LogIn(string phone, string password, bool rememberMe);
+        public Response LogIn(string phone, string password, bool rememberMe);
 
-        public List<User> GetUsers();
+        public Response GetUsers();
 
-        public Task<User> GetById(string userId);
+        public Response GetById(string userId);
 
-        public Task<User> GetByName(string userName);
+        public Response GetByName(string userName);
 
-        public Task<string> Register(ApiUser apiUser, string password);
+        public Response GetOrders(string userId);
 
-        public Task<string> Update(string userId, ApiUser apiUser);
+        public Response GetReViews(string userId);
 
-        public Task<string> Delete(string userId);
+        public Response Register(ApiUser apiUser, string password);
 
-        public Task<string> EditPassword(string userId, string newPassword, string oldPassword);
+        public Response Update(string userId, ApiUser apiUser);
+
+        public Response Delete(string userId);
+
+        public Response EditPassword(string userId, string newPassword, string oldPassword);
     }
 }

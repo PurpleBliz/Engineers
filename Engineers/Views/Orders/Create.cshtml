@@ -2,19 +2,16 @@
 @{
     ViewBag.Title = "Добавление заказа";
 }
-<form class="form-signin" method="post" asp-action="Create" asp-controller="Order" enctype="multipart/form-data">
+<form class="form-signin" method="post" asp-action="Create" asp-controller="Orders" enctype="multipart/form-data">
     <h2 class="form-signin-heading">Создание заказа</h2>
-    <div asp-validation-summary="All" class="text-danger"></div>
     <input class="form-control top" placeholder="Название" type="text" asp-for="Name">
-    <span asp-validation-for="Name"></span>
+    <span asp-validation-for="Name" class="text-danger"></span>
     <input class="form-control bottom " placeholder="Описание" type="text" asp-for="Description">
-    <span asp-validation-for="Description"></span>
+    <span asp-validation-for="Description" class="text-danger"></span>
     <input class="form-control top" placeholder="Цена" type="number" asp-for="Cost">
-    <span asp-validation-for="Cost"></span>
-    <input class="form-control top" placeholder="Адресс" type="text" asp-for="Address">
-    <span asp-validation-for="Address"></span>
-    <input class="form-control top" placeholder="Имя пользователя" type="text" asp-for="UserName">
-    <span asp-validation-for="UserName"></span>
+    <span asp-validation-for="Cost" class="text-danger"></span>
+    <input class="form-control top" placeholder="Пользователь" type="text" asp-for="UserName">
+    <span asp-validation-for="UserName" class="text-danger"></span>
     <input type="file" name="files" /><br>
     <input type="file" name="files" /><br>
     <input type="file" name="files" /><br>

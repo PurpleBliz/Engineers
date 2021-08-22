@@ -6,13 +6,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Engineers.Models
 {
-    public class Reviews
+    public class Review
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int User_Id { get; set; }
-        public int Order_Id { get; set; }
+        public string UserId { get; set; }
+        public User User{ get; set; }
+        public int OrderId { get; set; }
+        public Order Order{ get; set; }
         public string Text { get; set; }
         [Range(1, 5)]
         public int Rating { get; set; }

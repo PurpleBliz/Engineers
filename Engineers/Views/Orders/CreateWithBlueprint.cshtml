@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Engineers.Models.Blueprint>
+@{
+    ViewBag.Title = "Шаблоны";
+}
+
+<table class="table">
+    <tr><th>Название</th><th>Описание</th><th>Цена</th></tr>
+    @foreach (var order in Model)
+    {
+        <tr>
+            <td>@order.Name</td>
+            <td>@order.Description</td>
+            <td>@order.Cost</td>
+            <td>
+                <form asp-action="CreateWithBlueprint" asp-controller="Orders" asp-route-id="@order.Name" method="post">
+                    <button type="submit" class="btn btn-sm btn-dark">
+                        Добавить
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

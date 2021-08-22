@@ -8,6 +8,7 @@ using Engineers.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Engineers.Service
 {
@@ -16,95 +17,145 @@ namespace Engineers.Service
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
+        private readonly Response response = new();
+
         public UsersService(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+
+            response = new()
+            {
+                Code = 200,
+                Text = "OK",
+                Data = null,
+                Success = true
+            };
         }
 
-        public async Task<bool> LogIn(string phone, string password, bool rememberMe)
+        public Response LogIn(string phone, string password, bool rememberMe)
         {
-            var result = await _signInManager.PasswordSignInAsync(phone, password, rememberMe, false);
+            var result = _signInManager.PasswordSignInAsync(phone, password, rememberMe, false).Result;
 
-            return result.Succeeded;
+            response.Success = result.Succeeded;
+
+            if (!response.Success) return response.ReturnBADResponse("Вход не выполнен");
+
+            return response;
         }
 
-        public List<User> GetUsers()
+        public Response GetUsers()
         {
-            if (_userManager.Users.ToList().Count <= 0)
-                return null;
+            if (_userManager.Users.ToList().Count <= 0) 
+                return response.ReturnBADResponse("Пользователи отсутствуют");
 
-            return _userManager.Users.ToList();
+            response.Data = _userManager.Users.ToList();
+
+            return response;
         }
 
-        public async Task<User> GetById(string userId)
+        public Response GetByName(string userName)
         {
-            return await _userManager.FindByIdAsync(userId);
+            response.Data = _userManager.FindByNameAsync(userName).Result;
+
+            if (response.Data == null)
+                return response.ReturnBADResponse($"Пользователь не найден [{userName}]");
+
+            return response;
         }
 
-        public async Task<string> Register(ApiUser apiUser, string password)
+        public Response GetById(string userId)
         {
+            response.Data = 
+                _userManager.Users.Include(u => u.Orders).Include(u => u.Reviews).FirstOrDefault(u => u.Id == userId);
+
+            if (response.Data == null) 
+                return response.ReturnBADResponse("Пользователь не найден");
+
+            return response;
+        }
+
+        public Response Register(ApiUser apiUser, string password)
+        {
+            response.Data = apiUser;
+
+            if (!apiUser.IsValid()) 
+                return response.ReturnBADResponse("Пользователь не может быть зарегестрирован ! проверьте заполнение полей", apiUser);
+
             User oUser = apiUser.ConverToUser();
 
-            var result = await _userManager.CreateAsync(oUser, password);
+            response.Data = oUser;
 
-            if (!result.Succeeded)
-                return GetFullError(result);
+            var result = _userManager.CreateAsync(oUser, password).Result;
 
-            return $"Пользователь [{oUser.UserName}] успешно зарегестрирован !";
+            response.Success = result.Succeeded;
+
+            if (!response.Success)
+                return response.ReturnBADResponse(GetFullError(result), oUser);
+
+            return response;
         }
 
-        public async Task<string> Update(string userId, ApiUser apiUser)
+        public Response Update(string userId, ApiUser apiUser)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = _userManager.FindByIdAsync(userId).Result;
 
-            if (user != null)
-            {
-                user.UpdateInfo(apiUser.ConverToUser());
+            response.Data = user;
 
-                var result = await _userManager.UpdateAsync(user);
+            if (user.Role == Roles.ADMIN_EN) 
+                return response.ReturnBADResponse("Невозможно что то изменить у администратора", apiUser, 666);
 
-                if (result.Succeeded)
-                    return $"Данные пользователя [{user.UserName}] обновлены !";
-                else return GetFullError(result);
-            }
+            if (user == null)
+                return response.ReturnBADResponse($"Обновление не выполнено ! [{user.UserName}]: not found");
 
-            return $"Обновление не выполнено ! [{user.UserName}]: not found";
+            user.UpdateInfo(apiUser.ConverToUser());
+
+            response.Data = user;
+
+            var result = _userManager.UpdateAsync(user).Result;
+
+            response.Success = result.Succeeded;
+
+            if (!response.Success) response.ReturnBADResponse(GetFullError(result));
+
+            return response;
         }
 
-        public async Task<string> Delete(string userId)
+        public Response Delete(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = _userManager.FindByIdAsync(userId).Result;
 
-            if (user != null)
-            {
-                var result = await _userManager.DeleteAsync(user);
+            response.Data = user;
 
-                if (result.Succeeded)
-                    return $"Delete user:{user.UserName} is done !";
-                else
-                    return GetFullError(result);
-            }
+            if (user.Role == Roles.ADMIN_EN)
+                return response.ReturnBADResponse("Невозможно удалить администратора", user, 666);
 
-            return $"Error delete user:{user.UserName} not found !";
+            if (user == null)
+                return response.ReturnBADResponse($"Удаление не выполнено ! [{user.UserName}]: not found");
+
+            var result = _userManager.DeleteAsync(user).Result;
+
+            response.Success = result.Succeeded;
+
+            if (!response.Success) response.ReturnBADResponse(GetFullError(result));
+
+            return response;
         }
 
-        public async Task<string> EditPassword(string userId, string newPassword, string oldPassword)
+        public Response EditPassword(string userId, string newPassword, string oldPassword)
         {
-            User user = await _userManager.FindByIdAsync(userId);
+            User user = _userManager.FindByIdAsync(userId).Result;
 
-            if (user != null)
-            {
-                IdentityResult result =
-                    await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            if (user.Role == Roles.ADMIN_EN)
+                return response.ReturnBADResponse("Невозможно поменять пароль у администратора", user, 666);
 
-                if (result.Succeeded)
-                    return "Успешно !";
-                else
-                    return GetFullError(result);
-            }
-            else
-                return "Пользователь не найден";
+            var result = _userManager.ChangePasswordAsync(user, oldPassword, newPassword).Result;
+
+            response.Success = result.Succeeded;
+
+            if (!response.Success) response.ReturnBADResponse(GetFullError(result));
+
+            return response;
         }
 
         private static string GetFullError(IdentityResult result)
@@ -117,9 +168,30 @@ namespace Engineers.Service
             return fullError;
         }
 
-        public Task<User> GetByName(string userName)
+        public Response GetOrders(string userId)
         {
-            return _userManager.FindByNameAsync(userName);
+            response.Data = _userManager.Users.Include(o => o.Orders).FirstOrDefault(user => user.Id == userId);
+
+            if (response.Data is null)
+                return response.ReturnBADResponse("Пользователь не найден");
+
+            if ((response.Data as User).Orders is null)
+                response.Text = "У данного пользователя нет заказов";
+
+            return response;
+        }
+
+        public Response GetReViews(string userId)
+        {
+            response.Data = _userManager.Users.Include(o => o.Reviews).FirstOrDefault(user => user.Id == userId);
+
+            if (response.Data == null)
+                return response.ReturnBADResponse("Пользователь не найден");
+
+            if ((response.Data as User).Reviews is null)
+                response.Text = "У данного пользователя нет отзывов";
+
+            return response;
         }
     }
 }

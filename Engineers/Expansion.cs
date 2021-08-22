@@ -29,6 +29,15 @@ namespace Engineers
             return user;
         }
 
+        public static bool IsValid(this ApiUser user)
+        {
+            if (user.FullName != null
+                && user.UserName != null && user.Role != null
+                && user.PhoneNumber != null) return true;
+
+            return false;
+        }
+
         public static User UpdateInfo(this User user, User updateUser)
         {
             user.FullName = updateUser.FullName;
@@ -67,6 +76,17 @@ namespace Engineers
             return apiUser;
         }
 
+        public static Order ConverToOrder(this Blueprint blueprint)
+        {
+            Order order = new();
+
+            order.Name = blueprint.Name;
+            order.Description = blueprint.Description;
+            order.Cost = blueprint.Cost;
+
+            return order;
+        }
+
         public static string ConvertListToString(this List<string> array)
         {
             string result = "";
@@ -87,6 +107,40 @@ namespace Engineers
             result.AddRange(path.Split(';'));
 
             return result;
+        }
+
+
+        public static Response ReturnResponse(this Response resp, string text, int code = 400, object data = null, bool success = false)
+        {
+            return new Response()
+            {
+                Code = code,
+                Text = text,
+                Data = data,
+                Success = success
+            };
+        }
+
+        public static Response ReturnOKResponse(this Response resp, object data = null, string text = "OK", int code = 200, bool success = true)
+        {
+            return new Response()
+            {
+                Code = code,
+                Text = text,
+                Data = data,
+                Success = success
+            };
+        }
+
+        public static Response ReturnBADResponse(this Response resp, string text = "BAD", object data = null, int code = 400, bool success = false)
+        {
+            return new Response()
+            {
+                Code = code,
+                Text = text,
+                Data = data,
+                Success = success
+            };
         }
     }
 }

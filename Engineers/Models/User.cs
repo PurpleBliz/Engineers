@@ -16,10 +16,16 @@ namespace Engineers.Models
         public string Role { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<Respond> Responds { get; set; }
+        public virtual ICollection<OrdersInWork> OrdersInWork { get; set; }
 
         public User()
         {
             Orders = new List<Order>();
+            Reviews = new List<Review>();
+            Responds = new List<Respond>();
+            OrdersInWork = new List<OrdersInWork>();
         }
     }
 }

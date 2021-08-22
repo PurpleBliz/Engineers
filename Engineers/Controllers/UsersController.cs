@@ -6,9 +6,11 @@ using Engineers.Models;
 using Engineers.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Engineers.IService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Engineers.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -83,34 +85,34 @@ namespace Engineers.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model, IFormFile file)
         {
-            //if (ModelState.IsValid)
-            //{
-            User user = model.ConverToUser();
-
-            if (file != null)
+            if (ModelState.IsValid)
             {
-                var filePath = _fileService.Upload(file);
+                User user = model.ConverToUser();
 
-                user.Image = filePath;
-            }
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                if (user.Role == "customer")
-                    return RedirectToAction("GetCustomer");
-                else
-                    return RedirectToAction("GetExecutor");
-            }
-            else
-            {
-                foreach (var error in result.Errors)
+                if (file != null)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    var filePath = _fileService.Upload(file);
+
+                    user.Image = filePath;
+                }
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    if (user.Role == "customer")
+                        return RedirectToAction("GetCustomer");
+                    else
+                        return RedirectToAction("GetExecutor");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
-            //}
             return View(model);
         }
 
@@ -196,11 +198,18 @@ namespace Engineers.Controllers
         public async Task<ActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+
+            var _role = user.Role;
+
             if (user != null)
             {
                 await _userManager.DeleteAsync(user);
             }
-            return RedirectToAction("Index");
+
+            if (_role == "customer")
+                return RedirectToAction("GetCustomer");
+            else
+                return RedirectToAction("GetExecutor");
         }
     }
 }

@@ -10,6 +10,7 @@
         public static string PathToURL { get; set; }
         public static string PathToDefaultUserImage { get; set; }
         public static string PathToDefaultOrderImage { get; set; }
+        public static string PathToBlueprins { get; set; }
         public static bool IsDevelopment { get; set; }
     }
 }

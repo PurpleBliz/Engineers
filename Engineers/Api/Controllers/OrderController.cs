@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Mvc;
 using Engineers.Models;
 using Engineers.IService;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace Engineers.Api.Controllers
 {
@@ -12,7 +9,7 @@ namespace Engineers.Api.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private IOrderService _orderService = null;
+        private readonly IOrderService _orderService;
 
         public OrderController(IOrderService orderService)
         {
@@ -20,79 +17,47 @@ namespace Engineers.Api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public IEnumerable<Order> GetAll()
-        {
-            return _orderService.GetAll();
-        }
+        public Response GetAll() => _orderService.GetAll();
 
         [HttpGet("GetOpen")]
-        public IEnumerable<Order> GetOpen()
-        {
-            List<Order> result = new();
-            List<Order> oldList = _orderService.GetAll();
+        public Response GetOpen() => _orderService.GetOpen();
 
-            oldList.ForEach(order =>
-                {
-                    if (order.State == 1)
-                        result.Add(order);
-                });
+        [HttpGet("GetInWork")]
+        public Response GetInWork() => _orderService.GetInWork();
 
-            return result;
-        }
-
-        [HttpGet("Get")]
-        public IEnumerable<Order> GetOrders()
-        {
-            List<Order> result = new();
-            List<Order> oldList = _orderService.GetAll();
-
-            oldList.ForEach(order =>
-            {
-                if (order.State != 2)
-                    result.Add(order);
-            });
-
-            return result;
-        }
-
-        // GET api/<UserController>/5
         [HttpGet("Get/{id}")]
-        public Order GetOrder(int id)
-        {
-            return _orderService.GetById(id);
-        }
+        public Response GetOrder(int id) => _orderService.GetById(id);
 
-        // POST api/<UserController>
+        [HttpGet("GetByUser")]
+        public Response GetByUser(string userId) => _orderService.GetByUser(userId);
+
         [HttpPost("Create")]
-        public string Add([FromBody] Order oOrder)
+        public Response Add(Order oOrder) => _orderService.Create(oOrder);
+
+        [HttpPost("UpLoadImage/{id}")]
+        public Response UpLoadImage(int id, IFormFileCollection files)
         {
-            var result = _orderService.Create(oOrder, oOrder.User);
+            Order order;
 
-            if (result) return $"Заказ [{oOrder.Name}] успешно созджан !";
+            Response response = _orderService.GetById(id);
 
-            return $"Заказ [{oOrder.Name}] не был создан";
+            if (response.Success)
+                order = (Order)response.Data;
+            else return response;
+
+            response = _orderService.UploadImage(files);
+
+            if (response.Success)
+                order.Images = (string)response.Data;
+            else return response;
+
+            return _orderService.Update(order);
         }
 
-        // PUT api/<UserController>/5
         [HttpPut("Update/{id}")]
-        public string Update([FromBody] Order oOrder)
-        {
-            var result = _orderService.Update(oOrder);
+        public Response Update(Order oOrder) => _orderService.Update(oOrder);
 
-            if (result) return $"Заказ [{oOrder.Name}] успешно обновлен";
-
-            return $"Заказ [{oOrder.Name}] не был обновлен(не найден)";
-        }
-
-        // DELETE api/<UserController>/5
         [HttpDelete("Delete/{id}")]
-        public string Remove(int id)
-        {
-            var result = _orderService.Delete(id);
-
-            if (result) return "Заказ успешно удален";
-
-            return "Заказ не был удален (не найдено)";
-        }
+        public Response Remove(int id) => _orderService.Delete(id);
     }
 }

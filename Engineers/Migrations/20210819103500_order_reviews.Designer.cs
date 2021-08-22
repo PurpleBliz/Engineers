@@ -4,14 +4,16 @@ using Engineers.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Engineers.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210819103500_order_reviews")]
+    partial class order_reviews
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,14 +34,17 @@ namespace Engineers.Migrations
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExecutorId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Images")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InWorkId")
-                        .HasColumnType("int");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -50,9 +55,6 @@ namespace Engineers.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("State")
                         .HasColumnType("int");
 
@@ -61,28 +63,25 @@ namespace Engineers.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Engineers.Models.OrdersInWork", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Order_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExecutorId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("User_Id")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Finished_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Started_at")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("ExecutorId");
+                    b.HasKey("Id");
 
                     b.ToTable("OrdersInWorks");
                 });
@@ -374,28 +373,11 @@ namespace Engineers.Migrations
 
             modelBuilder.Entity("Engineers.Models.Order", b =>
                 {
-                    b.HasOne("Engineers.Models.User", "Owner")
+                    b.HasOne("Engineers.Models.User", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("CustomerId");
 
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("Engineers.Models.OrdersInWork", b =>
-                {
-                    b.HasOne("Engineers.Models.User", "Executor")
-                        .WithMany("OrdersInWork")
-                        .HasForeignKey("ExecutorId");
-
-                    b.HasOne("Engineers.Models.Order", "Order")
-                        .WithOne("InWork")
-                        .HasForeignKey("Engineers.Models.OrdersInWork", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Executor");
-
-                    b.Navigation("Order");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Engineers.Models.Respond", b =>
@@ -485,8 +467,6 @@ namespace Engineers.Migrations
 
             modelBuilder.Entity("Engineers.Models.Order", b =>
                 {
-                    b.Navigation("InWork");
-
                     b.Navigation("Responds");
 
                     b.Navigation("Reviews");
@@ -495,8 +475,6 @@ namespace Engineers.Migrations
             modelBuilder.Entity("Engineers.Models.User", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("OrdersInWork");
 
                     b.Navigation("Responds");
 

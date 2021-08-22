@@ -11,7 +11,8 @@ namespace Engineers.ViewModels
         public string Description { get; set; }
         public List<string> Images { get; set; }
         public int Cost { get; set; }
-        public string Address { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
         public int State { get; set; }//0-close, 1-open, 2-delete
         public DateTime Updated_at { get; set; }
     }

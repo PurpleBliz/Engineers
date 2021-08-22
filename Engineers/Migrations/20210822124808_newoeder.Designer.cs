@@ -4,14 +4,16 @@ using Engineers.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Engineers.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210822124808_newoeder")]
+    partial class newoeder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,18 +73,18 @@ namespace Engineers.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExecutorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Finished_at")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Started_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ExecutorId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("OrdersInWorks");
                 });
@@ -383,15 +385,15 @@ namespace Engineers.Migrations
 
             modelBuilder.Entity("Engineers.Models.OrdersInWork", b =>
                 {
-                    b.HasOne("Engineers.Models.User", "Executor")
-                        .WithMany("OrdersInWork")
-                        .HasForeignKey("ExecutorId");
-
                     b.HasOne("Engineers.Models.Order", "Order")
                         .WithOne("InWork")
                         .HasForeignKey("Engineers.Models.OrdersInWork", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Engineers.Models.User", "Executor")
+                        .WithMany("OrdersInWork")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Executor");
 

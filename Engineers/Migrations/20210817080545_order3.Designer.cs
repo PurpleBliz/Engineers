@@ -4,14 +4,16 @@ using Engineers.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Engineers.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210817080545_order3")]
+    partial class order3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,9 +40,6 @@ namespace Engineers.Migrations
                     b.Property<string>("Images")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InWorkId")
-                        .HasColumnType("int");
-
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
@@ -50,44 +49,41 @@ namespace Engineers.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("State")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Updated_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Engineers.Models.OrdersInWork", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Order_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExecutorId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("User_Id")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Finished_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Started_at")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("ExecutorId");
+                    b.HasKey("Id");
 
                     b.ToTable("OrdersInWorks");
                 });
 
-            modelBuilder.Entity("Engineers.Models.Respond", b =>
+            modelBuilder.Entity("Engineers.Models.Reviews", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,35 +93,7 @@ namespace Engineers.Migrations
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Responds");
-                });
-
-            modelBuilder.Entity("Engineers.Models.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Created_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -374,57 +342,21 @@ namespace Engineers.Migrations
 
             modelBuilder.Entity("Engineers.Models.Order", b =>
                 {
-                    b.HasOne("Engineers.Models.User", "Owner")
-                        .WithMany("Orders")
-                        .HasForeignKey("OwnerId");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("Engineers.Models.OrdersInWork", b =>
-                {
-                    b.HasOne("Engineers.Models.User", "Executor")
-                        .WithMany("OrdersInWork")
-                        .HasForeignKey("ExecutorId");
-
-                    b.HasOne("Engineers.Models.Order", "Order")
-                        .WithOne("InWork")
-                        .HasForeignKey("Engineers.Models.OrdersInWork", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Executor");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Engineers.Models.Respond", b =>
-                {
-                    b.HasOne("Engineers.Models.Order", "Order")
-                        .WithMany("Responds")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Engineers.Models.User", "User")
-                        .WithMany("Responds")
+                        .WithMany("Orders")
                         .HasForeignKey("UserId");
-
-                    b.Navigation("Order");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Engineers.Models.Review", b =>
+            modelBuilder.Entity("Engineers.Models.Reviews", b =>
                 {
                     b.HasOne("Engineers.Models.Order", "Order")
-                        .WithMany("Reviews")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("OrderId");
 
                     b.HasOne("Engineers.Models.User", "User")
-                        .WithMany("Reviews")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("Order");
@@ -483,24 +415,9 @@ namespace Engineers.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Engineers.Models.Order", b =>
-                {
-                    b.Navigation("InWork");
-
-                    b.Navigation("Responds");
-
-                    b.Navigation("Reviews");
-                });
-
             modelBuilder.Entity("Engineers.Models.User", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("OrdersInWork");
-
-                    b.Navigation("Responds");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,21 +4,25 @@
 }
 <form class="form-signin" asp-action="Create" asp-controller="Users" method="post" enctype="multipart/form-data">
     <h2 class="form-signin-heading">Создание пользователя</h2>
-    <div asp-validation-summary="All" class="text-danger"></div>
     <input class="form-control top" placeholder="ФИО пользователя" type="text" asp-for="FullName">
-    <span asp-validation-for="FullName"></span>
+    <span asp-validation-for="FullName" class="text-danger"></span>
     <input class="form-control top" placeholder="Никнейм пользователя" type="text" asp-for="UserName">
-    <span asp-validation-for="UserName"></span>
-    <input class="form-control top" placeholder="Телефон" type="tel" asp-for="PhoneNumber">
-    <span asp-validation-for="PhoneNumber"></span>
+    <span asp-validation-for="UserName" class="text-danger"></span>
+    <script type="text/javascript">
+         jQuery(function($){
+         $("#tel").mask("+7(999) 999-99-99");
+         });
+    </script>
+    <input class="form-control top" placeholder="Телефон" type="tel" id="tel" name="tel" asp-for="PhoneNumber">
+    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
     <input class="form-control top" placeholder="Город" type="text" asp-for="City">
-    <span asp-validation-for="City"></span>
+    <span asp-validation-for="City" class="text-danger"></span>
     <input class="form-control top" placeholder="Возраст" type="number" asp-for="Age">
-    <span asp-validation-for="Age"></span>
+    <span asp-validation-for="Age" class="text-danger"></span>
     <input class="form-control top" placeholder="Образование" type="text" asp-for="Education">
-    <span asp-validation-for="Education"></span>
+    <span asp-validation-for="Education" class="text-danger"></span>
     <input class="form-control top" placeholder="Баланс" type="number" asp-for="Balance">
-    <span asp-validation-for="Balance"></span>
+    <span asp-validation-for="Balance" class="text-danger"></span>
     @if (Model.Role == null)
     {
         <select class="dropdown field" type="text" asp-for="Role">

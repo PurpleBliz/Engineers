@@ -9,7 +9,8 @@ namespace Engineers.Context
     {
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrdersInWork> OrdersInWorks { get; set; }
-        public DbSet<Reviews> Reviews { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Respond> Responds { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -24,9 +25,13 @@ namespace Engineers.Context
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Reviews>()
+            modelBuilder.Entity<Review>()
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Respond>()
+                .Property(f => f.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }

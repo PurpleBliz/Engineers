@@ -3,34 +3,36 @@ using Microsoft.AspNetCore.Mvc;
 using Engineers.ViewModels;
 using Engineers.Models;
 using Engineers.IService;
-using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Engineers.Controllers
-{ 
-    public class OrderController : Controller
+{
+    [Authorize(Roles = "admin")]
+    public class OrdersController : Controller
     {
         private readonly int DefaultState = 1;
 
         private readonly IOrderService _orderService;
-        private readonly IFileService _fileService;
         private readonly IUserService _userService;
 
-        public OrderController(IOrderService orderService, IFileService fileService, IUserService userService)
+        public OrdersController(IOrderService orderService, IUserService userService)
         {
             _orderService = orderService;
-            _fileService = fileService;
             _userService = userService;
         }
 
-        public IActionResult Index() => View(_orderService.GetAll());
+        public IActionResult Index() => View((List<Order>)_orderService.GetAll().Data);
+
+        public IActionResult CreateWithBlueprint() => View((List<Blueprint>)_orderService.GetBlueprints().Data);
 
         public IActionResult Create() => View();
 
         public IActionResult Edit(int id)
         {
-            var order = _orderService.GetById(id);
+            var order = (Order)_orderService.GetById(id).Data;
 
             if (order == null)
                 return NotFound();
@@ -42,7 +44,8 @@ namespace Engineers.Controllers
                 Description = order.Description,
                 Images = order.Images.ConvertStringToList(),
                 Cost = order.Cost,
-                Address = order.Address,
+                Longitude =order.Longitude,
+                Latitude = order.Latitude,
                 State = order.State,
                 Updated_at = DateTime.Now
             };
@@ -55,27 +58,21 @@ namespace Engineers.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _userService.GetByName(model.UserName).Result;
-
-                if (user == null)
-                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
-
                 Order order = new()
                 {
                     Name = model.Name,
                     Description = model.Description,
                     Images = null,
                     Cost = model.Cost,
-                    Address = model.Address,
                     State = DefaultState,
-                    User = user,
+                    Owner = (User)_userService.GetByName(model.UserName).Data,
                     Created_at = DateTime.Now,
                     Updated_at = DateTime.Now
                 };
 
-                order.Images = _fileService.UploadArray(files).ConvertListToString();
+                order.Images = _orderService.UploadImage(files).Data.ToString();
 
-                if (_orderService.Create(order, user)) return RedirectToAction("Index");
+                if (_orderService.Create(order).Success) return RedirectToAction("Index");
 
                 else return View(model);
             }
@@ -83,23 +80,47 @@ namespace Engineers.Controllers
         }
 
         [HttpPost]
+        public IActionResult CreateWithBlueprint(string id)
+        {
+            List<Blueprint> models = (List<Blueprint>)_orderService.GetBlueprints().Data;
+
+            Blueprint model = models.FirstOrDefault(print => print.Name == id);
+
+            if (model == null) return RedirectToAction("CreateWithBlueprint");
+
+            Order order = new()
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Images = Properties.PathToDefaultOrderImage,
+                Cost = model.Cost,
+                State = DefaultState,
+                Owner = (User)_userService.GetByName("admin").Data,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+
+            if (_orderService.Create(order).Success) return RedirectToAction("Index");
+
+            else return RedirectToAction("CreateWithBlueprint");
+        }
+
+        [HttpPost]
         public IActionResult Edit(EditOrderViewModel model, IFormFileCollection files)
         {
             if (ModelState.IsValid)
             {
-                Order order = _orderService.GetById(model.Id);
+                Order order = (Order)_orderService.GetById(model.Id).Data;
 
                 order.Name = model.Name;
                 order.Description = model.Description;
                 order.Cost = model.Cost;
-                order.Address = model.Address;
+                order.Longitude = model.Longitude;
+                order.Latitude = model.Latitude;
                 order.State = model.State;
                 order.Updated_at = DateTime.Now;
 
-                if (files.Count != 0)
-                {
-                  order.Images = _fileService.UploadArray(files).ConvertListToString();
-                }
+                order.Images = _orderService.UploadImage(files).Data.ToString();
 
                 try
                 {
@@ -117,7 +138,7 @@ namespace Engineers.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
-            bool gg =_orderService.Delete(Convert.ToInt32(id));
+            _orderService.Delete(Convert.ToInt32(id));
 
             return RedirectToAction("Index");
         }
