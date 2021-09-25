@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.SignalR;
 using Engineers.Models;
 using Engineers.Context;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Engineers.IService;
 using Engineers.Service;
 using Microsoft.OpenApi.Models;
+using Engineers.Hubs;
 
 namespace Engineers
 {
@@ -49,6 +51,8 @@ options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoop
             services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(Properties.ConnectionString));
 
+            services.AddScoped<Api.IService.IOrderService, Api.Service.OrderService>();
+
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UsersService>();
             services.AddScoped<IFileService, FileService>();
@@ -59,6 +63,8 @@ options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoop
     .AddEntityFrameworkStores<ApplicationContext>();
 
             services.AddControllersWithViews();
+
+            services.AddSignalR();
 
             services.AddControllersWithViews()
     .AddJsonOptions(o =>
@@ -95,6 +101,9 @@ options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoop
 
             app.UseEndpoints(endpoints =>
             {
+
+                endpoints.MapHub<ChatHub>("/chat");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

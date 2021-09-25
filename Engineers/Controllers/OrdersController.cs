@@ -30,6 +30,19 @@ namespace Engineers.Controllers
 
         public IActionResult Create() => View();
 
+        public IActionResult SendRespond(int id)
+        {
+            CreateRespondViewModel model = new()
+            {
+                UserId = "",
+                OrderId = id
+            };
+
+            return View(model);
+        }
+
+        public IActionResult GetResponds(int id) => View((List<Respond>)_orderService.GetResponds(id).Data);
+
         public IActionResult Edit(int id)
         {
             var order = (Order)_orderService.GetById(id).Data;
@@ -73,6 +86,28 @@ namespace Engineers.Controllers
                 order.Images = _orderService.UploadImage(files).Data.ToString();
 
                 if (_orderService.Create(order).Success) return RedirectToAction("Index");
+
+                else return View(model);
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult SendRespond(CreateRespondViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = (User)_userService.GetByName(model.UserName).Data;
+
+                Respond respond = new()
+                {
+                    OrderId = model.OrderId,
+                    UserId = userId.Id,
+                    Text = model.Text,
+                    Created_at = DateTime.Now
+                };
+
+                if (_orderService.SendRespond(respond).Success) return RedirectToAction("Index");
 
                 else return View(model);
             }
@@ -136,9 +171,17 @@ namespace Engineers.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(int id)
         {
-            _orderService.Delete(Convert.ToInt32(id));
+            _orderService.Delete(id);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult RemoveRespond(int id)
+        {
+            _orderService.RemoveRespond(id);
 
             return RedirectToAction("Index");
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Engineers.Models;
+using Engineers.Api.Models;
 using Engineers.IService;
 using Microsoft.AspNetCore.Http;
 
@@ -22,13 +23,13 @@ namespace Engineers.Api.Controllers
         public Response GetUsers() => _userService.GetUsers();
 
         [HttpGet("GetOrders/{id}")]
-        public Response GetOrders(string userId) => _userService.GetOrders(userId);
+        public Response GetOrders(string id) => _userService.GetOrders(id);
 
         [HttpGet("GetReViews/{id}")]
-        public Response GetReViews(string userId) => _userService.GetReViews(userId);
+        public Response GetReViews(string id) => _userService.GetReViews(id);
 
         [HttpGet("GetById/{id}")]
-        public Response GetById(string userId) => _userService.GetById(userId);
+        public Response GetById(string id) => _userService.GetById(id);
 
         [HttpGet("GetByName/{userName}")]
         public Response GetByName(string userName) => _userService.GetByName(userName);
@@ -37,9 +38,9 @@ namespace Engineers.Api.Controllers
         public Response Registration([FromBody] ApiUser oApiUser, string password) => _userService.Register(oApiUser, password);
 
         [HttpPost("UpLoadImage/{id}")]
-        public Response UpLoadImage(string userId, IFormFile ImageFile)
+        public Response UpLoadImage(string id, IFormFile ImageFile)
         {
-            User user = (User)_userService.GetById(userId).Data;
+            User user = (User)_userService.GetById(id).Data;
 
             var path = _fileService.Upload(ImageFile);
 
@@ -47,7 +48,7 @@ namespace Engineers.Api.Controllers
 
             ApiUser apiUser = user.ConverToApiUser();
 
-            return  _userService.Update(userId, apiUser);
+            return  _userService.Update(id, apiUser);
         }
 
         [HttpPut("Update/{id}")]

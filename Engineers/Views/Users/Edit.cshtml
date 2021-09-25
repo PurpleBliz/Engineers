@@ -52,8 +52,12 @@
         <input type="text" asp-for="Age" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="Education" class="control-label">Образование</label>
-        <input type="text" asp-for="Education" class="form-control" />
+        <select class="dropdown field" type="text" asp-for="Qualification">
+            @foreach (var item in Roles.GetQualification)
+            {
+                <option value="@item">@item</option>
+            }
+        </select>
     </div>
     <div class="form-group">
         <label asp-for="Balance" class="control-label">Баланс</label>
@@ -78,14 +82,14 @@
         </select>
     </div>
     <div class="form-group">
-        <label asp-for="MinDescription" class="control-label">Краткое описание</label>
-        <input type="text" asp-for="MinDescription" class="form-control" />
+        <label asp-for="Description" class="control-label">Oписание</label>
+        <input type="text" asp-for="Description" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="Fulldescription" class="control-label">Полное описание</label>
+        <label asp-for="Comments" class="control-label">Комментарий</label>
     </div>
     <div class="class_bigtext">
-        <input type="text" asp-for="Fulldescription" class="form-control" />
+        <input type="text" asp-for="Comments" class="form-control" />
     </div>
     <div class="form-group">
         <label asp-for="Image" class="control-label">Путь к картинке</label>

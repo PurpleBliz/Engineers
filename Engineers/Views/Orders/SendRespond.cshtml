@@ -1,0 +1,12 @@
+﻿@model Engineers.ViewModels.CreateRespondViewModel
+@{
+    ViewBag.Title = "Добавление Отклика";
+}
+<form class="form-signin" asp-action="SendRespond" asp-controller="Orders" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="@Model.OrderId">
+    <input class="form-control top" placeholder="Никнейм пользователя" type="text" asp-for="UserName">
+    <span asp-validation-for="UserName" class="text-danger"></span>
+    <input class="form-control top" placeholder="Текст отклика" type="tel" id="tel" name="text" asp-for="Text">
+    <span asp-validation-for="Text" class="text-danger"></span>
+    <button class="btn btn-primary btn-block" type="submit">Добавить</button>
+</form>

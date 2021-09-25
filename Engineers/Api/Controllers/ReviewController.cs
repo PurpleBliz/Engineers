@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Engineers.Models;
-using Engineers.IService;
+using Engineers.Api.IService;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
@@ -22,5 +22,11 @@ namespace Engineers.Api.Controllers
 
         [HttpPost("Create")]
         public Response Create(Review review) => _reviewsService.Create(review);
+
+        [HttpPost("GetByUser")]
+        public Response GetByUser(string userId) => _reviewsService.GetByUser(userId);
+
+        [HttpPost("GetByOrder")]
+        public Response GetByOrder(int orderId) => _reviewsService.GetByOrder(orderId);
     }
 }

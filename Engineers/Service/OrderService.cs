@@ -91,6 +91,17 @@ namespace Engineers.Service
             }
         }
 
+        public Response RemoveRespond(int respondId)
+        {
+            var respond = _context.Responds.FirstOrDefault(x => x.Id == respondId);
+
+            _context.Responds.Remove(respond);
+
+            _context.SaveChanges();
+
+            return response;
+        }
+
         public Response GetAll()
         {
             response.Data = _context.Orders.Include(o => o.Owner).Include(o => o.Responds).Include(o => o.InWork).ToList();
@@ -121,7 +132,7 @@ namespace Engineers.Service
 
         public Response GetByUser(string userId)
         {
-            var Order = _context.Orders.Include(u => u.Owner).Include(o => o.InWork).Include(o => o.Responds).FirstOrDefault(o => o.Owner.Id == userId);
+            var Order = _context.Orders.FirstOrDefault(o => o.Owner.Id == userId);
 
             response.Data = Order;
 
@@ -223,6 +234,30 @@ namespace Engineers.Service
                 response.Text = "У данного заказа отсутствуют отзывы";
 
             return response;
+        }
+
+        public Response GetResponds(int orderId)
+        {
+            response.Data = _context.Responds.Where(r => r.OrderId == orderId)
+                .Include(o => o.User)
+                .Include(o => o.Order)
+                .ToList();
+
+            if ((response.Data as List<Respond>).Count <= 0)
+                response.Text = "Откликов пока нет";
+
+            return response;
+        }
+
+        public Response SendRespond(Respond respond)
+        {
+            respond.Created_at = DateTime.Now;
+
+            _context.Responds.Add(respond);
+
+            _context.SaveChanges();
+
+            return GetResponds(respond.OrderId);
         }
 
         public Response SelectExecutor(Order oOrder, User user)

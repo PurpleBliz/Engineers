@@ -5,7 +5,7 @@
 <a asp-controller="Orders" asp-action="Create">+ Добавить задание</a>    |
 <a asp-controller="Orders" asp-action="CreateWithBlueprint">+ Добавить шаблонное задание</a>
 <table class="table">
-    <tr><th>Картинка</th><th>Название</th><th>Цена</th><th>Пользователь</th></tr>
+    <tr><th>Картинка</th><th>Название</th><th>Цена</th><th>Пользователь</th><th>Отклики</th><th>Статус</th></tr>
     @foreach (var order in Model)
     {
         if (order.Images != null)
@@ -24,12 +24,32 @@
                 {
                     <td>Пользователь не определен</td>
                 }
+
+                @if (order.Responds != null)
+                {
+                    <td><a asp-controller="Orders" asp-action="GetResponds" asp-route-id="@order.Id">@order.Responds.Count</a></td>
+                }
+                else
+                {
+                    <td>0</td>
+                }
+
+                @if (order.InWork != null)
+                {
+                    <td><a asp-controller="Orders" asp-action="Edit" asp-route-id="@order.InWork.Executor.Id">Вработе (@order.InWork.Executor.UserName)</a></td>
+                }
+                else
+                {
+                    <td>Исполнитель не выбран</td>
+                }
                 <td>
                     <form asp-action="Delete" asp-route-id="@order.Id" method="post">
                         <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@order.Id">Изменить</a>
                         <button type="submit" class="btn btn-sm btn-danger">
                             Удалить
                         </button>
+                        @if (order.Responds.Count <= 0)
+                        {<a class="btn btn-light" asp-action="SendRespond" asp-route-id="@order.Id">+ Добавить отклик</a>}
                     </form>
                 </td>
             </tr>

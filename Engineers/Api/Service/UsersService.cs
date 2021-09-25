@@ -5,7 +5,7 @@ using Engineers.IService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Engineers.Service
+namespace Engineers.Api.Service
 {
     public class UsersService : IUserService
     {

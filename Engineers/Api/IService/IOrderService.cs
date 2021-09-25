@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Engineers.Api.Models;
 using Engineers.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace Engineers.IService
+namespace Engineers.Api.IService
 {
     public interface IOrderService
     {
@@ -12,23 +12,23 @@ namespace Engineers.IService
 
         public Response GetInWork();
 
-        public Response GetResponds(int orderId);
-
-        public Response RemoveRespond(int respondId);
-
-        public Response SendRespond(Respond respond);
+        public Response GetComplited();
 
         public Response GetById(int OrderId);
 
+        public Response Complited(int orderId);
+
         public Response GetByUser(string userId);
 
-        public Response GetReviews(int OrderId);
+        public Response GetResponds(int orderId);
 
-        public Response SelectExecutor(Order oOrder, User user);
+        public Response SendRespond(Respond respond);
 
-        public Response Create(Order oOrder);
+        public Response SelectExecutor(ApiOrder apiOrder, string userId);
+
+        public Response Create(ApiOrder apiOrder);
                
-        public Response Update(Order oOrder);
+        public Response Update(ApiOrder apiOrder, int id);
 
         public Response UploadImage(IFormFileCollection files);
                

@@ -1,7 +1,7 @@
 ﻿using Engineers.Api.Models;
 using Engineers.Models;
 
-namespace Engineers.IService
+namespace Engineers.Api.IService
 {
     public interface IUserService
     {

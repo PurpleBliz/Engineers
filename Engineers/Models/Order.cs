@@ -16,7 +16,7 @@ namespace Engineers.Models
         public int Cost { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
-        public int State { get; set; }//0-close, 1-open
+        public int State { get; set; }//0-close, 1-open, 3 complited
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
 

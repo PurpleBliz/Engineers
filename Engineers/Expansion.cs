@@ -1,9 +1,7 @@
 ﻿using Engineers.Models;
-using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Engineers.Api.Models;
 
 namespace Engineers
 {
@@ -17,14 +15,13 @@ namespace Engineers
             user.UserName = apiUser.UserName;
             user.Image = apiUser.Image;
             user.PhoneNumber = apiUser.PhoneNumber;
-            user.MinDescription = apiUser.MinDescription;
+            user.Comments = apiUser.Comments;
             user.City = apiUser.City;
             user.Age = apiUser.Age;
-            user.Education = apiUser.Education;
-            user.Fulldescription = apiUser.Fulldescription;
+            user.Qualification = apiUser.Qualification;
+            user.Description = apiUser.Description;
             user.Balance = apiUser.Balance;
             user.Role = apiUser.Role;
-            user.Orders = apiUser.Orders;
 
             return user;
         }
@@ -44,11 +41,11 @@ namespace Engineers
             user.UserName = updateUser.UserName;
             user.Image = updateUser.Image;
             user.PhoneNumber = updateUser.PhoneNumber;
-            user.MinDescription = updateUser.MinDescription;
+            user.Comments = updateUser.Comments;
             user.City = updateUser.City;
             user.Age = updateUser.Age;
-            user.Education = updateUser.Education;
-            user.Fulldescription = updateUser.Fulldescription;
+            user.Qualification = updateUser.Qualification;
+            user.Description = updateUser.Description;
             user.Balance = updateUser.Balance;
             user.Role = updateUser.Role;
             user.Orders = updateUser.Orders;
@@ -64,16 +61,107 @@ namespace Engineers
             apiUser.UserName = user.UserName;
             apiUser.Image = user.Image;
             apiUser.PhoneNumber = user.PhoneNumber;
-            apiUser.MinDescription = user.MinDescription;
+            apiUser.Comments = user.Comments;
             apiUser.City = user.City;
             apiUser.Age = user.Age;
-            apiUser.Education = user.Education;
-            apiUser.Fulldescription = user.Fulldescription;
+            apiUser.Qualification = user.Qualification;
+            apiUser.Description = user.Description;
             apiUser.Balance = user.Balance;
             apiUser.Role = user.Role;
-            apiUser.Orders = user.Orders;
 
             return apiUser;
+        }
+
+
+        public static Order ConverToOrder(this ApiOrder apiOrder)
+        {
+            Order order = new()
+            {
+                Id = apiOrder.Id,
+                Name = apiOrder.Name,
+                Description = apiOrder.Description,
+                Images = apiOrder.Images,
+                Cost = apiOrder.Cost,
+                Longitude = apiOrder.Longitude,
+                Latitude = apiOrder.Latitude,
+                State = apiOrder.State,
+                Created_at = apiOrder.Created_at,
+                Updated_at = apiOrder.Updated_at,
+                OwnerId = apiOrder.OwnerId,
+                InWorkId = apiOrder.InWorkId
+            };
+
+            return order;
+        }
+
+        public static List<ApiOrder> ConverToListApiOrder(this List<Order> orders)
+        {
+            List<ApiOrder> apiOrders = new();
+
+            orders.ForEach(order => 
+            {
+                apiOrders.Add(order.ConverToApiOrder());
+            });
+
+            return apiOrders;
+        }
+
+        public static Order UpdateInfo(this Order order, Order updateOrder)
+        {
+            order.Id = updateOrder.Id;
+            order.Name = updateOrder.Name;
+            order.Description = updateOrder.Description;
+            order.Images = updateOrder.Images;
+            order.Cost = updateOrder.Cost;
+            order.Longitude = updateOrder.Longitude;
+            order.Latitude = updateOrder.Latitude;
+            order.State = updateOrder.State;
+            order.Created_at = updateOrder.Created_at;
+            order.Updated_at = updateOrder.Updated_at;
+            order.OwnerId = updateOrder.OwnerId;
+            order.InWorkId = updateOrder.InWorkId;
+
+            return order;
+        }
+
+        public static ApiOrder ConverToApiOrder(this Order order)
+        {
+            if (order is null) return null;
+
+            if (order.Owner is null)
+                return null;
+
+            ApiOrder apiOrder = new()
+            {
+                Id = order.Id,
+                Name = order.Name,
+                Description = order.Description,
+                Images = order.Images,
+                Cost = order.Cost,
+                Longitude = order.Longitude,
+                Latitude = order.Latitude,
+                State = order.State,
+                Created_at = order.Created_at,
+                Updated_at = order.Updated_at,
+                OwnerId = order.OwnerId,
+                OwnerName = order.Owner.UserName,
+                InWorkId = order.InWorkId
+            };
+
+            return apiOrder;
+        }
+
+        public static bool IsValid(this ApiOrder apiOrder)
+        {
+            if (apiOrder.Name is null ||
+                    apiOrder.Description is null ||
+                    apiOrder.Cost == 0 ||
+                    apiOrder.Longitude == 0 ||
+                    apiOrder.Latitude == 0 ||
+                    apiOrder.OwnerId is null)
+                return false;
+
+            return true;
         }
 
         public static Order ConverToOrder(this Blueprint blueprint)

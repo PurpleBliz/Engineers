@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Engineers.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Engineers.Context
 {
@@ -11,6 +10,7 @@ namespace Engineers.Context
         public DbSet<OrdersInWork> OrdersInWorks { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Respond> Responds { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -32,6 +32,11 @@ namespace Engineers.Context
             modelBuilder.Entity<Respond>()
                 .Property(f => f.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Message>()
+                .HasOne(u => u.Sander)
+                .WithMany(d => d.Messages)
+                .HasForeignKey(d => d.UserId);
         }
     }
 }

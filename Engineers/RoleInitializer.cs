@@ -30,7 +30,7 @@ namespace Engineers
                     Role = adminName,
                     PhoneNumber = Properties.CompanyPhone,
                     FullName = Properties.CompanyName,
-                    Fulldescription = "Этот аккаунт предназначен для управления всей системой"
+                    Description = "Этот аккаунт предназначен для управления всей системой"
                 };
                 var result = await userManager.CreateAsync(admin, password);
 

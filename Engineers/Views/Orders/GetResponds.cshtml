@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Engineers.Models.Respond>
+@{
+    ViewBag.Title = "Список откликов";
+}
+
+<table class="table">
+    <tr><th>Название заказа</th><th>ФИО пользователя</th><th>Никнейм пользователя</th><th>Дата отклика</th></tr>
+    @foreach (var respond in Model)
+    {
+        <tr>
+            <td>@respond.Order.Name</td>
+            <td>@respond.User.FullName</td>
+            <td>@respond.User.UserName</td>
+            <td>@respond.Created_at</td>
+            <td>
+                <form asp-controller="Orders" asp-action="RemoveRespond" asp-route-id="@respond.Id" method="post">
+                    @*<a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@respond.Id">Изменить</a>*@
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Удалить
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

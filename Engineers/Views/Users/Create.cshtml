@@ -9,9 +9,9 @@
     <input class="form-control top" placeholder="Никнейм пользователя" type="text" asp-for="UserName">
     <span asp-validation-for="UserName" class="text-danger"></span>
     <script type="text/javascript">
-         jQuery(function($){
-         $("#tel").mask("+7(999) 999-99-99");
-         });
+        jQuery(function ($) {
+            $("#tel").mask("+7(999) 999-99-99");
+        });
     </script>
     <input class="form-control top" placeholder="Телефон" type="tel" id="tel" name="tel" asp-for="PhoneNumber">
     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
@@ -19,10 +19,14 @@
     <span asp-validation-for="City" class="text-danger"></span>
     <input class="form-control top" placeholder="Возраст" type="number" asp-for="Age">
     <span asp-validation-for="Age" class="text-danger"></span>
-    <input class="form-control top" placeholder="Образование" type="text" asp-for="Education">
-    <span asp-validation-for="Education" class="text-danger"></span>
     <input class="form-control top" placeholder="Баланс" type="number" asp-for="Balance">
     <span asp-validation-for="Balance" class="text-danger"></span>
+    <select class="dropdown field" type="text" asp-for="Qualification">
+        @foreach (var item in Roles.GetQualification)
+        {
+            <option value="@item">@item</option>
+        }
+    </select>
     @if (Model.Role == null)
     {
         <select class="dropdown field" type="text" asp-for="Role">
@@ -36,10 +40,10 @@
     {
         <input type="hidden" asp-for="Role" />
     }
-    <input class="form-control bottom " placeholder="Краткое описание" type="text" asp-for="MinDescription">
-    <span asp-validation-for="MinDescription"></span>
-    <input class="form-control bottom" placeholder="Полное описание" type="text" asp-for="Fulldescription">
-    <span asp-validation-for="Fulldescription"></span>
+    <input class="form-control bottom " placeholder="Комментарий" type="text" asp-for="Comments">
+    <span asp-validation-for="Comments"></span>
+    <input class="form-control bottom" placeholder="Описание" type="text" asp-for="Description">
+    <span asp-validation-for="Description"></span>
     <input class="form-control bottom" placeholder="Пароль" type="password" asp-for="Password">
     <span asp-validation-for="Password"></span>
     <input class="form-control top" type="file" name="file">

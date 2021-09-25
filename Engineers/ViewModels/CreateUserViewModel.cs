@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Http;
-using Engineers.Models;
+using Engineers.Api.Models;
 
 namespace Engineers.ViewModels
 {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Engineers.Models;
 
-namespace Engineers.Models
+namespace Engineers.Api.Models
 {
     public class ApiUser
     {
@@ -10,12 +11,10 @@ namespace Engineers.Models
         public string PhoneNumber { get; set; }
         public string City { get; set; }
         public int Age { get; set; }
-        public string Education { get; set; }
+        public string Qualification { get; set; }
         public int Balance { get; set; }
         public string Role { get; set; }
-        public string Fulldescription { get; set; }
-        public string MinDescription { get; set; }
-
-        public virtual ICollection<Order> Orders { get; set; }
+        public string Comments { get; set; }
+        public string Description { get; set; }
     }
 }
